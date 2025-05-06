@@ -1,0 +1,1 @@
+a sorta proxy software that's just for using ai on my local computer
