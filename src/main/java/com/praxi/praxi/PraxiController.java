@@ -1,8 +1,11 @@
 package com.praxi.praxi;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 import org.springframework.stereotype.Controller;
@@ -83,7 +86,29 @@ public class PraxiController {
     }
 
     private String[] getModels() throws IOException, InterruptedException {
-        return new String[] {"gemini", "llava", "mistral"};
+        try (Socket socket = new Socket(getIP(), 5080)) {
+                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                DataInputStream dis = new DataInputStream(socket.getInputStream());
+
+                String message = "GRAB_MODELS";
+                dos.writeInt(message.length());
+                dos.write(message.getBytes());
+                dos.flush();
+
+                int length = dis.readInt();
+                byte[] buffer = new byte[length];
+                dis.read(buffer, 0, length);
+                String response = new String(buffer);
+                String[] models = response.split("\n");
+
+                dis.close();
+                dos.close();
+                socket.close();
+                return models;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new String[] {};
+            }
     }
 
     private String getPassword() throws IOException {
@@ -92,5 +117,13 @@ public class PraxiController {
         if (scanner.hasNextLine()) password = scanner.nextLine();
         scanner.close();
         return password == null ? "" : password;
+    }
+
+    private String getIP() throws IOException {
+        Scanner scanner = new Scanner(new File("ip"));
+        String ip = "";
+        if (scanner.hasNextLine()) ip = scanner.nextLine();
+        scanner.close();
+        return ip == null ? "" : ip;
     }
 }
