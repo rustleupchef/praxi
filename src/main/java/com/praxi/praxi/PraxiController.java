@@ -86,29 +86,34 @@ public class PraxiController {
     }
 
     private String[] getModels() throws IOException, InterruptedException {
-        try (Socket socket = new Socket(getIP(), 5080)) {
-                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                DataInputStream dis = new DataInputStream(socket.getInputStream());
+        String response = send("getModels");
+        return response == "" ? new String[0] : response.split("\n");
+    }
 
-                String message = "GRAB_MODELS";
+    private String send(String... messages) throws IOException, InterruptedException {
+        try (Socket socket = new Socket(getIP(), 5080)) {
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+            DataInputStream dis = new DataInputStream(socket.getInputStream());
+
+            for (String message : messages) {
                 dos.writeInt(message.length());
                 dos.write(message.getBytes());
-                dos.flush();
-
-                int length = dis.readInt();
-                byte[] buffer = new byte[length];
-                dis.read(buffer, 0, length);
-                String response = new String(buffer);
-                String[] models = response.split("\n");
-
-                dis.close();
-                dos.close();
-                socket.close();
-                return models;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new String[] {};
             }
+            dos.flush();
+
+            int length = dis.readInt();
+            byte[] buffer = new byte[length];
+            dis.read(buffer, 0, length);
+
+            dis.close();
+            dos.close();
+
+            socket.close();
+            return new String(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     private String getPassword() throws IOException {
