@@ -60,14 +60,16 @@ public class PraxiController {
     }
 
     @PostMapping("/submit")
-    @ResponseBody public Message submit(@RequestParam String prompt, @RequestParam String model) {
+    @ResponseBody public Message submit(
+        @RequestParam String prompt, 
+        @RequestParam String model) throws IOException, InterruptedException {
         if (!modelExists(model)) {
             return new Message("Invalid model selected!", "error");
         }
         return new Message("Form submitted successfully!", "success");
     }
 
-    private boolean modelExists(String model) {
+    private boolean modelExists(String model) throws IOException, InterruptedException {
         String[] validModels = getModels();
         for (String validModel : validModels) {
             if (validModel.equals(model)) {
@@ -77,8 +79,8 @@ public class PraxiController {
         return false;
     }
 
-    private String[] getModels() {
-        return new String[] {"mistral", "llava", "gemini"};
+    private String[] getModels() throws IOException, InterruptedException {
+        return new String[] {"gemini", "llava", "mistral"};
     }
 
     private String getPassword() throws IOException {
@@ -86,6 +88,6 @@ public class PraxiController {
         String password = "";
         if (scanner.hasNextLine()) password = scanner.nextLine();
         scanner.close();
-        return password;
+        return password == null ? "" : password;
     }
 }

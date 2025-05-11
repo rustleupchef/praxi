@@ -2,7 +2,7 @@ function submit() {
     const xhr = new XMLHttpRequest();
     const prompt = encodeURIComponent(document.getElementById("prompt").value);
     const model = encodeURIComponent(document.getElementById("model").value);
-    xhr.open("POST", "/submit?prompt=" + prompt + "&model=", true);
+    xhr.open("POST", "/submit?prompt=" + prompt + "&model=" + model, true);
     xhr.onload = function () {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
