@@ -35,7 +35,10 @@ public class PraxiController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpSession session) {
+        if (session.getAttribute("verified") != null) {
+            return "redirect:/home";
+        }
         return "login";
     }
 
