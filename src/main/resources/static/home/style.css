@@ -1,0 +1,38 @@
+body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+#response {
+    position: absolute;
+    top: 5%;
+    left: 25%;
+    width: 50%;
+    height: 70%;
+    overflow: scroll;
+    text-align: left;
+}
+
+#prompt {
+    position: absolute;
+    bottom: 2.5%;
+    left: 10%;
+    width: 50%;
+    height:5%;
+}
+
+#model {
+    position: absolute;
+    bottom: 2.5%;
+    left: 62.5%;
+    width: 20%;
+    height: 5%;
+}
+
+#submit {
+    position: absolute;
+    bottom: 2.5%;
+    right: 7.5%;
+    width: 7.5%;
+    height: 5%;
+}
