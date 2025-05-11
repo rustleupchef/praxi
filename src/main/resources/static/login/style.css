@@ -1,0 +1,15 @@
+#password {
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 5%;
+}
+
+#login {
+    position: absolute;
+    left: 25%;
+    top: 35%;
+    width: 50%;
+    height: 5%;
+}
