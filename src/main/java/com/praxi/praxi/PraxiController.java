@@ -86,7 +86,7 @@ public class PraxiController {
     }
 
     private String[] getModels() throws IOException, InterruptedException {
-        String response = send("getModels");
+        String response = send("GRAB_MODELS");
         return response == "" ? new String[0] : response.split("\n");
     }
 
