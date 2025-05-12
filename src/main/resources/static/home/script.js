@@ -9,7 +9,10 @@ function submit() {
             if (response.type === "error") {
                 console.error("Error:", response.message);
                 alert("Error: " + response.message);
+                return;
             }
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = response.message;
         } else {
             console.error("Error:", xhr.statusText);
         }

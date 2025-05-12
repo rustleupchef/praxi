@@ -72,7 +72,11 @@ public class PraxiController {
         if (!modelExists(model)) {
             return new Message("Invalid model selected!", "error");
         }
-        return new Message("Form submitted successfully!", "success");
+        String response = send("request", prompt, model);
+        if (response.equals("")) {
+            return new Message("Error connecting to server!", "error");
+        }
+        return new Message(response, "success");
     }
 
     private boolean modelExists(String model) throws IOException, InterruptedException {
@@ -86,7 +90,7 @@ public class PraxiController {
     }
 
     private String[] getModels() throws IOException, InterruptedException {
-        String response = send("GRAB_MODELS");
+        String response = send("GRAB_MODELS").trim();
         return response == "" ? new String[0] : response.split("\n");
     }
 
