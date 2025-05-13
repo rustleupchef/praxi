@@ -79,6 +79,11 @@ public class PraxiController {
         return new Message(response, "success");
     }
 
+    @PostMapping("/get-models")
+    @ResponseBody public String getModelsPost() throws IOException, InterruptedException {
+        return send("GRAB_MODELS").trim();
+    }
+
     private boolean modelExists(String model) throws IOException, InterruptedException {
         String[] validModels = getModels();
         for (String validModel : validModels) {

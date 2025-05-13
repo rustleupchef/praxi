@@ -1,0 +1,10 @@
+.model-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.model-list-item {
+    margin: 10px;
+    text-align: center;
+}
