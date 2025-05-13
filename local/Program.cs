@@ -125,11 +125,16 @@ class Program
                 StringContent content = new(data, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(url, content);
                 if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Error: {response.ReasonPhrase}");
                     return "";
+                }
+
                 result = await response.Content.ReadAsStringAsync();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return "";
             }
             dynamic json = JsonConvert.DeserializeObject(result);
@@ -153,11 +158,16 @@ class Program
             StringContent ollamaContent = new(JsonConvert.SerializeObject(ollamaPayload), Encoding.UTF8, "application/json");
             HttpResponseMessage ollamaResponse = await ollamaClient.PostAsync("/api/generate", ollamaContent);
             if (!ollamaResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Error: {ollamaResponse.ReasonPhrase}");
                 return "";
+            }
+
             ollamaText = await ollamaResponse.Content.ReadAsStringAsync();
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             return "";
         }
         dynamic ollamaJson = JsonConvert.DeserializeObject(ollamaText);
