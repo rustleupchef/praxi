@@ -13,7 +13,7 @@ function submit() {
                 alert("Error: " + response.message);
                 return;
             }
-            const resultDiv = document.getElementById("result");
+            const resultDiv = document.getElementById("response");
             resultDiv.innerHTML = response.message;
         } else {
             document.getElementById("submit").disabled = false;
