@@ -45,6 +45,14 @@ public class PraxiController {
         return "login";
     }
 
+    @GetMapping("/models")
+    public String models(HttpSession session) {
+        if (session.getAttribute("verified") == null) {
+            return "redirect:/login";
+        }
+        return "models";
+    }
+
     @PostMapping("/login")
     @ResponseBody public Message loginPost(HttpSession session, @RequestParam String password) throws IOException {
         String correctPassword = getPassword();

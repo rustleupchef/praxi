@@ -8,12 +8,14 @@ function updateModel() {
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             const response = xhr.responseText.split("\n");
+            console.log("Models fetched:", response);
             for (let i = 0; i < response.length; i++) {
                 const model = response[i].trim();
                 if (model) {
-                    const option = document.createElement("option");
-                    option.value = model;
-                    option.setAttribute("class", "model-option");
+                    console.log(model)
+                    const option = document.createElement("li");
+                    option.innerText = model;
+                    option.setAttribute("class", "model-list-item");
                     document.getElementById("model-list").appendChild(option);
                 }
             }

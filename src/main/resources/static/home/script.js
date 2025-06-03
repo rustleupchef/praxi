@@ -1,5 +1,6 @@
 function submit() {
     document.getElementById("submit").disabled = true;
+    document.getElementById("response").innerHTML = "Processing...";
     const xhr = new XMLHttpRequest();
     const prompt = encodeURIComponent(document.getElementById("prompt").value);
     const model = encodeURIComponent(document.getElementById("model").value);

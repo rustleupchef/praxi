@@ -1,18 +1,13 @@
-#password {
-    position: absolute;
-    left: 25%;
-    top: 25%;
-    width: 50%;
-    height: 5%;
+#model-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: white;
 }
 
-#login {
-    position: absolute;
-    left: 25%;
-    top: 35%;
-    width: 50%;
-    height: 5%;
-    background-color: #7289da;
+.model-list-item {
+    margin: 10px;
+    text-align: center;
 }
 
 body {
@@ -37,7 +32,7 @@ input:focus {
     border: 1px solid #7289da;
 }
 
-#login:hover {
+#submit:hover {
     background-color: #677bc4;
 }
 
