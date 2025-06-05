@@ -134,6 +134,9 @@ public class PraxiController {
     }
 
     private String getPassword() throws IOException {
+        if (!new File("password").exists()) {
+            return "";
+        }
         Scanner scanner = new Scanner(new File("password"));
         String password = "";
         if (scanner.hasNextLine()) password = scanner.nextLine();

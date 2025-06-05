@@ -8,13 +8,8 @@ namespace local;
 
 class Program
 {
-    private static string key;
     internal static async Task Main()
     {
-        dynamic json = JsonConvert.DeserializeObject(File.ReadAllText("config.json"));
-        key = (string) json.key;
-        
-        
         using (TcpListener socket = new(IPAddress.Any, 5080))
         {
             socket.Start();
@@ -42,7 +37,7 @@ class Program
 
                 if (type == "GRAB_MODELS")
                 {
-                    byte[] models = Encoding.UTF8.GetBytes("gemini\nmistral\nllava");
+                    byte[] models = Encoding.UTF8.GetBytes("mistral\nllava");
                     stream.Write(BitConverter.GetBytes(models.Length), 0, 4);
                     stream.Write(models, 0, models.Length);
                     stream.Flush();
@@ -91,56 +86,9 @@ class Program
 
     private static async Task<String> llm(string _model, string _prompt)
     {
-        string url = (_model == "gemini") 
-            ? $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={key}" 
-            : "http://localhost:11434/";
+        const string url = "http://localhost:11434/";
 
         if (_prompt == "") return "";
-
-        if (_model == "gemini")
-        {
-            var payload = new
-            {
-                contents = new[]
-                {
-                    new
-                    {
-                        parts = new object[]
-                        {
-                            new
-                            {
-                                text = _prompt
-                            }
-                        }
-                    }
-                }
-            };
-            
-            string data = JsonConvert.SerializeObject(payload);
-
-            string result;
-            try
-            {
-                using HttpClient client = new();
-                StringContent content = new(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(url, content);
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"Error: {response.ReasonPhrase}");
-                    return "";
-                }
-
-                result = await response.Content.ReadAsStringAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return "";
-            }
-            dynamic json = JsonConvert.DeserializeObject(result);
-            string text = (string)json["candidates"][0]["content"]["parts"][0]["text"];
-            return text;
-        }
 
         using HttpClient ollamaClient = new();
         ollamaClient.BaseAddress = new Uri(url);
