@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -37,7 +38,7 @@ class Program
 
                 if (type == "GRAB_MODELS")
                 {
-                    byte[] models = Encoding.UTF8.GetBytes("mistral\nllava");
+                    byte[] models = Encoding.UTF8.GetBytes(get_models());
                     stream.Write(BitConverter.GetBytes(models.Length), 0, 4);
                     stream.Write(models, 0, models.Length);
                     stream.Flush();
@@ -121,5 +122,39 @@ class Program
         dynamic ollamaJson = JsonConvert.DeserializeObject(ollamaText);
         ollamaText = (string) ollamaJson["response"];
         return ollamaText;
+    }
+
+    private static string get_models()
+    {
+        string models = "";
+        string[] modelsArray;
+        
+        try
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                FileName = "ollama",
+                Arguments = "list",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+
+            using (Process process = Process.Start(startInfo))
+            {
+                modelsArray = process.StandardOutput.ReadToEnd().Split("\n");
+                process.WaitForExit();
+
+            }
+        }
+        catch (Exception e)
+        {
+            return models;
+        }
+
+        for (int i = 1 ; i < modelsArray.Length; i++)
+            models += modelsArray[i].Split(":")[0] + "\n";
+        Console.WriteLine($"Models: {models}");
+        return modelsArray.Length > 1 ? models.Substring(0, models.Length - 1) : "";
     }
 }
