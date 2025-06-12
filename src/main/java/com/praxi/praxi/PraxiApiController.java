@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,23 +16,23 @@ import com.password4j.Password;
 
 @RestController
 public class PraxiApiController {
-    @PostMapping("/api/get-models")
+    @GetMapping("/api/get-models")
     public String[] getModels(@RequestParam String password) throws IOException, InterruptedException {
         String correctPassword = getPassword();
-        if (Password.check(password, correctPassword).withBcrypt())
+        if (!Password.check(password, correctPassword).withBcrypt())
             return "You are not verified".split("\n");
         String response = send("GRAB_MODELS").trim();
         return response == "" ? new String[0] : response.split("\n");
     }
 
-    @PostMapping("/api/generate")
+    @GetMapping("/api/generate")
     public String generate(@RequestParam String model, @RequestParam String prompt, @RequestParam String password) throws IOException, InterruptedException {
         String correctPassword = getPassword();
-        if (Password.check(password, correctPassword).withBcrypt())
+        if (!Password.check(password, correctPassword).withBcrypt())
             return "You are not verified";
         if (!modelExists(model, password))
             return "Model does not exist";
-        String response = send("GENERATE", model, prompt).trim();
+        String response = send("GENERATE", prompt, model).trim();
         return !response.equals("") ? response : "Error Connecting to server";
     }
 
