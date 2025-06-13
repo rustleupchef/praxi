@@ -20,6 +20,7 @@ class Program
                 string type;
                 string prompt;
                 string model;
+                string format;
                 
                 TcpClient client = socket.AcceptTcpClient();
                 NetworkStream stream = client.GetStream();
@@ -70,8 +71,19 @@ class Program
                      bytesRead += stream.Read(buffer, bytesRead, length - bytesRead));
                 model = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
                 
+                lengthBuffer = new byte[4];
+                reader.Read(lengthBuffer, 0, 4);
+                if (BitConverter.IsLittleEndian) lengthBuffer = lengthBuffer.Reverse().ToArray();
+                length = BitConverter.ToInt32(lengthBuffer, 0);
+                
+                buffer = new byte[length];
+                for (int bytesRead = 0;
+                     bytesRead < length;
+                     bytesRead += stream.Read(buffer, bytesRead, length - bytesRead));
+                format = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                
                 Console.WriteLine($"Model: {model}\tPrompt: {prompt}");
-                string text = await llm(model, prompt);
+                string text = await llm(model, prompt, format);
                 Console.WriteLine(text);
                 byte[] message = Encoding.UTF8.GetBytes(text);
                 
@@ -85,7 +97,7 @@ class Program
         }
     }
 
-    private static async Task<String> llm(string _model, string _prompt)
+    private static async Task<String> llm(string _model, string _prompt, string _format)
     {
         const string url = "http://localhost:11434/";
 
@@ -119,8 +131,12 @@ class Program
             Console.WriteLine(ex.Message);
             return "";
         }
-        dynamic ollamaJson = JsonConvert.DeserializeObject(ollamaText);
-        ollamaText = (string) ollamaJson["response"];
+
+        if (_format != "json")
+        {
+            dynamic ollamaJson = JsonConvert.DeserializeObject(ollamaText);
+            ollamaText = (string) ollamaJson["response"];
+        }
         return ollamaText;
     }
 

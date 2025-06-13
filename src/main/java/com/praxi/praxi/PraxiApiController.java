@@ -4,14 +4,17 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.password4j.Password;
 
 @RestController
@@ -26,14 +29,38 @@ public class PraxiApiController {
     }
 
     @GetMapping("/api/generate")
-    public String generate(@RequestParam String model, @RequestParam String prompt, @RequestParam String password) throws IOException, InterruptedException {
+    public HashMap<String, Object> generate(
+        @RequestParam String model, 
+        @RequestParam String prompt, 
+        @RequestParam String password, 
+        @RequestParam(required = false, defaultValue = "false") String trim) throws IOException, InterruptedException {
+
         String correctPassword = getPassword();
         if (!Password.check(password, correctPassword).withBcrypt())
-            return "You are not verified";
+            return new HashMap<String, Object>() {{
+                put("error", "You are not verified");
+            }};
         if (!modelExists(model, password))
-            return "Model does not exist";
-        String response = send("GENERATE", prompt, model).trim();
-        return !response.equals("") ? response : "Error Connecting to server";
+            new HashMap<>() {{
+                put("error", "Invalid model selected!");
+            }};
+
+        String format = trim.equals("true") ? "text" : "json";
+        String response = send("GENERATE", prompt, model, format).trim();
+        
+        if (format.equals("json")) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
+            return !response.equals("") 
+            ? gson.fromJson(response, type) 
+            : new HashMap<String, Object>() {{
+                put("error", "Error connecting to server!");
+            }};
+        }
+
+        return new HashMap<String, Object>() {{
+            put("response", response);
+        }};
     }
 
     private String send(String... messages) throws IOException, InterruptedException {

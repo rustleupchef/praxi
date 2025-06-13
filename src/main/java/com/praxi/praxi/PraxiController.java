@@ -80,7 +80,7 @@ public class PraxiController {
         if (!modelExists(model)) {
             return new Message("Invalid model selected!", "error");
         }
-        String response = send("request", prompt, model);
+        String response = send("GENERATE", prompt, model, "text");
         if (response.equals("")) {
             return new Message("Error connecting to server!", "error");
         }
