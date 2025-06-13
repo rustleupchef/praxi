@@ -3,6 +3,7 @@ package com.praxi.praxi;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,11 @@ public class PraxiApplication {
 			writer.close();
 			return;
         }
+		Scanner scanner = new Scanner(new File("ip"));
+		if (!scanner.hasNextLine()) {
+			scanner.close();
+			return;
+		}
 		SpringApplication.run(PraxiApplication.class, args);
 	}
 
